@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AUTODOC | WBR — Mock</title>
+  <style>
+    :root{
+      --bg:#f6f7f9;
+      --card:#ffffff;
+      --line:#e7e9ee;
+      --text:#1f2430;
+      --muted:#6c7486;
+      --accent:#ff5a1f;
+      --chip:#f1f3f7;
+      --chip2:#eef0f4;
+      --heat:#f6cbbf;
+      --heat2:#fbe5df;
+      --ok:#2e7d32;
+      --shadow: 0 1px 0 rgba(16,24,40,.04), 0 8px 24px rgba(16,24,40,.06);
+      --radius:14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:var(--bg);
+    }
+
+    .topbar{
+      height:56px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 18px;
+      background:#fff;
+      border-bottom:1px solid var(--line);
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .brand .logo{
+      width:18px;height:18px;border-radius:4px;
+      background:linear-gradient(135deg,var(--accent),#ffb28f);
+      box-shadow: inset 0 0 0 2px rgba(0,0,0,.06);
+    }
+    .brand .sep{opacity:.25}
+    .rightmeta{
+      display:flex; align-items:center; gap:14px; color:var(--muted);
+      font-size:12.5px;
+    }
+    .icons{display:flex; gap:10px; align-items:center;}
+    .iconbtn{
+      width:28px;height:28px;border-radius:10px;
+      background:var(--chip);
+      border:1px solid var(--line);
+      display:grid;place-items:center;
+      cursor:pointer;
+    }
+    .iconbtn svg{width:16px;height:16px;stroke:#6b7280}
+
+    .wrap{
+      display:grid;
+      grid-template-columns: 300px 1fr;
+      gap:14px;
+      padding:14px;
+      max-width: 1600px;
+      margin:0 auto;
+    }
+
+    .sidebar{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .sb-head{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+    }
+    .sb-title{
+      font-weight:700;
+      display:flex; align-items:center; gap:8px;
+    }
+    .sb-title small{
+      font-weight:700;
+      color:var(--accent);
+      background:rgba(255,90,31,.10);
+      border:1px solid rgba(255,90,31,.20);
+      padding:2px 8px;
+      border-radius:999px;
+      font-size:12px;
+    }
+    .sb-sub{margin-top:10px;color:var(--muted); font-size:12px}
+    .sb-body{
+      padding:12px 14px 14px;
+      height: calc(100vh - 56px - 28px);
+      overflow:auto;
+    }
+    .filter{ margin-bottom:12px; }
+    .filter label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+    .row2{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+    select, input{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-size:13px;
+      outline:none;
+    }
+    select:focus, input:focus{
+      border-color: rgba(255,90,31,.35);
+      box-shadow: 0 0 0 4px rgba(255,90,31,.10);
+    }
+    .clear{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muted);
+      text-decoration:underline;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .main{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      min-width:0;
+    }
+
+    .tabs{
+      display:flex;
+      gap:10px;
+      align-items:flex-end;
+      justify-content:space-between;
+    }
+    .tablist{ display:flex; gap:10px; flex-wrap:wrap; }
+    .tab{
+      padding:10px 14px;
+      border-radius:14px 14px 0 0;
+      border:1px solid var(--line);
+      background:var(--chip2);
+      color:var(--muted);
+      font-weight:600;
+      cursor:pointer;
+      user-select:none;
+    }
+    .tab.active{
+      background:#fff;
+      color:var(--text);
+      border-bottom-color:#fff;
+    }
+    .tabactions{
+      display:flex; align-items:center; gap:10px;
+      color:var(--muted);
+      font-size:12.5px;
+      padding-bottom:6px;
+    }
+    .linkbtn{
+      display:flex; gap:8px; align-items:center;
+      padding:8px 10px;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .linkbtn svg{width:16px;height:16px;stroke:#6b7280}
+
+    .kpis{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius: 0 14px 14px 14px;
+      box-shadow:var(--shadow);
+      padding:12px;
+    }
+    .kpi-grid{
+      display:grid;
+      grid-template-columns: repeat(7, minmax(140px, 1fr));
+      gap:10px;
+    }
+    .kpi{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:#fff;
+    }
+    .kpi .name{font-size:12px;color:var(--muted); display:flex; justify-content:space-between; gap:10px}
+    .kpi .val{margin-top:6px; font-size:18px; font-weight:800;}
+    .kpi .val.accent{color:var(--accent)}
+    .kpi .ly{
+      margin-top:6px;
+      font-size:12px;
+      color:var(--muted);
+      display:flex;
+      justify-content:space-between;
+    }
+    .pill{
+      padding:2px 8px;
+      border-radius:999px;
+      background:var(--chip);
+      border:1px solid var(--line);
+      font-size:11px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      justify-content:space-between;
+      margin-top:10px;
+    }
+    .chips{
+      display:flex; flex-wrap:wrap; gap:8px;
+      align-items:center;
+    }
+    .chip{
+      background:var(--chip);
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:8px 10px;
+      font-size:12.5px;
+      color:var(--text);
+      cursor:pointer;
+      user-select:none;
+      font-weight:600;
+    }
+    .chip.active{
+      background:#fff;
+      border-color: rgba(255,90,31,.25);
+      box-shadow: 0 0 0 4px rgba(255,90,31,.09);
+    }
+    .toggles{ display:flex; align-items:center; gap:8px; }
+    .seg{
+      display:flex;
+      border:1px solid var(--line);
+      border-radius:12px;
+      overflow:hidden;
+      background:#fff;
+    }
+    .seg button{
+      border:0;
+      background:transparent;
+      padding:8px 10px;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+      cursor:pointer;
+      border-right:1px solid var(--line);
+    }
+    .seg button:last-child{border-right:0}
+    .seg button.active{
+      background:var(--chip);
+      color:var(--text);
+    }
+
+    .tablecard{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      min-width:0;
+    }
+    .tablehead{
+      padding:10px 12px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .tablehead .left{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    }
+    .tabletitle{font-weight:800}
+    .search{
+      display:flex; align-items:center; gap:8px;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:12px;
+      padding:8px 10px;
+      min-width:260px;
+    }
+    .search input{ border:0; padding:0; outline:none; font-size:13px; }
+    .search svg{width:16px;height:16px;stroke:#6b7280}
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      font-size:12.5px;
+    }
+    thead th{
+      position:sticky;
+      top:0;
+      z-index:2;
+      background:#fbfbfd;
+      color:var(--muted);
+      text-align:left;
+      padding:10px 10px;
+      border-bottom:1px solid var(--line);
+      white-space:nowrap;
+      font-weight:800;
+    }
+    tbody td{
+      padding:9px 10px;
+      border-bottom:1px solid var(--line);
+      vertical-align:middle;
+      white-space:nowrap;
+    }
+    tbody tr:hover{background:#fafbff}
+
+    .tree{
+      display:flex; align-items:center; gap:8px;
+      min-width:260px;
+    }
+    .caret{
+      width:18px;height:18px;border-radius:6px;
+      border:1px solid var(--line);
+      background:var(--chip);
+      display:grid;place-items:center;
+      cursor:pointer;
+      user-select:none;
+      font-family:var(--mono);
+      font-size:11px;
+      color:var(--muted);
+    }
+    .indent-0{padding-left:0}
+    .indent-1{padding-left:18px}
+    .indent-2{padding-left:36px}
+    .indent-3{padding-left:54px}
+
+    .heat{
+      background:linear-gradient(0deg, var(--heat2), var(--heat2));
+      border-radius:10px;
+      padding:4px 8px;
+      display:inline-block;
+      border:1px solid rgba(255,90,31,.12);
+    }
+    .heat.strong{
+      background:linear-gradient(0deg, var(--heat), var(--heat));
+      border-color: rgba(255,90,31,.22);
+      font-weight:800;
+    }
+    .num{font-variant-numeric: tabular-nums; font-family: var(--mono); font-size:12px;}
+    .muted{color:var(--muted)}
+    .badge{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--muted);
+      font-weight:800;
+      font-size:11px;
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background:var(--accent)}
+    .scroll{
+      max-height: calc(100vh - 56px - 14px - 14px - 56px - 180px);
+      overflow:auto;
+    }
+
+    /* optional: make BoF column narrow */
+    .bof-col{ width:70px; text-align:center; }
+
+    @media (max-width: 1180px){
+      .wrap{grid-template-columns:1fr}
+      .kpi-grid{grid-template-columns: repeat(2, minmax(160px, 1fr));}
+      .scroll{max-height: none;}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"></span>
+      <span>AUTODOC</span>
+      <span class="sep">|</span>
+      <span style="font-weight:800">WBR</span>
+    </div>
+    <div class="rightmeta">
+      <span>Last refreshed:&nbsp;<span class="num">20.02.2026 05:02:11</span></span>
+      <div class="icons">
+        <div class="iconbtn" title="Home">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M3 11.5 12 4l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>
+          </svg>
+        </div>
+        <div class="iconbtn" title="Info">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M12 22a10 10 0 1 0-10-10 10 10 0 0 0 10 10z"/>
+            <path d="M12 10v7"/>
+            <path d="M12 7h.01"/>
+          </svg>
+        </div>
+        <div class="iconbtn" title="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <aside class="sidebar">
+      <div class="sb-head">
+        <div class="sb-title">Weekly Business Review <small>YtD</small></div>
+        <div class="sb-sub">Selected week: <span class="muted">—</span></div>
+      </div>
+
+      <div class="sb-body">
+        <div class="filter">
+          <label>Week</label>
+          <div class="row2">
+            <select>
+              <option>Все</option>
+              <option>Week 1</option>
+              <option>Week 2</option>
+            </select>
+            <select>
+              <option>Month: множестве...</option>
+              <option>Jan</option><option>Feb</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="filter">
+          <label>Generic</label>
+          <select>
+            <option>Brake discs and pads set (3405)</option>
+            <option>Braking System</option>
+            <option>Brake Kit</option>
+          </select>
+        </div>
+
+        <div class="filter">
+          <label>Dept., category, subcategory</label>
+          <select><option>Все</option></select>
+        </div>
+
+        <div class="filter row2">
+          <div><label>CM group</label><select><option>Все</option></select></div>
+          <div><label>Team</label><select><option>Все</option></select></div>
+        </div>
+
+        <div class="filter"><label>Art no</label><select><option>Все</option></select></div>
+
+        <div class="filter row2">
+          <div><label>Brand</label><select><option>Все</option></select></div>
+          <div><label>Is PB</label><select><option>Все</option></select></div>
+        </div>
+
+        <div class="filter row2">
+          <div><label>Brand Classification</label><select><option>Все</option></select></div>
+          <div><label>&amp; type</label><select><option>Все</option></select></div>
+        </div>
+
+        <div class="filter row2">
+          <div><label>Supplier, group</label><select><option>Все</option></select></div>
+          <div><label>&amp; is disabled</label><select><option>Все</option></select></div>
+        </div>
+
+        <div class="filter"><label>Country, group</label><select><option>Все</option></select></div>
+        <div class="filter"><label>Business unit, platform</label><select><option>Все</option></select></div>
+        <div class="filter"><label>P&amp;B ClusterId</label><select><option>Все</option></select></div>
+        <div class="filter"><label>Price Index PB Brand</label><select><option>Все</option></select></div>
+
+        <div class="filter row2">
+          <div><label>Promo</label><select><option>Все</option></select></div>
+          <div><label>Purchase type</label><select><option>Все</option></select></div>
+        </div>
+
+        <div class="filter row2">
+          <div><label>Supplier's PB</label><select><option>Все</option></select></div>
+          <div><label>PB active generic</label><select><option>Все</option></select></div>
+        </div>
+
+        <div class="filter row2">
+          <div><label>Vehicle type</label><select><option>Все</option></select></div>
+          <div><label>Is reman</label><select><option>Все</option></select></div>
+        </div>
+
+        <div class="filter row2">
+          <div><label>Surcharge</label><select><option>Все</option></select></div>
+          <div><label>Tyres Season</label><select><option>Все</option></select></div>
+        </div>
+
+        <div class="clear" onclick="alert('Mock: clear slicers')">Clear all slicers</div>
+      </div>
+    </aside>
+
+    <section class="main">
+      <div class="tabs">
+        <div class="tablist" id="tablist">
+          <div class="tab">Overview</div>
+          <div class="tab active">YtD</div>
+          <div class="tab">YtD Article+Brand+Generic</div>
+          <div class="tab">Time Series</div>
+        </div>
+        <div class="tabactions">
+          <div class="linkbtn" title="Previous years">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+              <path d="M3 12a9 9 0 1 0 3-6.7"/>
+              <path d="M3 3v6h6"/>
+            </svg>
+            Previous years
+          </div>
+        </div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi-grid">
+          <div class="kpi">
+            <div class="name">Product revenue <span class="pill">YtD</span></div>
+            <div class="val accent">€ 0,2 млн</div>
+            <div class="ly"><span>LY: <span class="num">€ 0,2 млн</span></span><span class="badge"><span class="dot"></span>+28,88%</span></div>
+          </div>
+          <div class="kpi">
+            <div class="name">PM <span class="pill">YtD</span></div>
+            <div class="val accent">€ 0,1 млн</div>
+            <div class="ly"><span>LY: <span class="num">€ 0,1 млн</span></span><span class="badge"><span class="dot"></span>+28,57%</span></div>
+          </div>
+          <div class="kpi">
+            <div class="name">COGS <span class="pill">YtD</span></div>
+            <div class="val accent">€ 0,2 млн</div>
+            <div class="ly"><span>LY: <span class="num">€ 0,1 млн</span></span><span class="badge"><span class="dot"></span>+29,08%</span></div>
+          </div>
+          <div class="kpi">
+            <div class="name">Units sold <span class="pill">YtD</span></div>
+            <div class="val accent">0,0 млн</div>
+            <div class="ly"><span>LY: <span class="num">0,0 млн</span></span><span class="badge"><span class="dot"></span>+40,54%</span></div>
+          </div>
+          <div class="kpi">
+            <div class="name">ASP</div>
+            <div class="val"><span class="num">€ 71,4</span></div>
+            <div class="ly"><span>LY: <span class="num">€ 77,9</span></span><span class="badge"><span class="dot"></span>-8,29%</span></div>
+          </div>
+          <div class="kpi">
+            <div class="name">Profit per unit</div>
+            <div class="val"><span class="num">€ 30,1</span></div>
+            <div class="ly"><span>LY: <span class="num">€ 30,1</span></span><span class="badge"><span class="dot"></span>0%</span></div>
+          </div>
+          <div class="kpi">
+            <div class="name">COGS per unit</div>
+            <div class="val"><span class="num">43,9</span></div>
+            <div class="ly"><span>LY: <span class="num">47,8</span></span><span class="badge"><span class="dot"></span>-8,15%</span></div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <div class="chips" id="chips">
+            <div class="chip active">Category</div>
+            <div class="chip">Subcategory</div>
+            <div class="chip">Node</div>
+            <div class="chip">Generic</div>
+            <div class="chip">PB ClusterId</div>
+            <div class="chip">Article id</div>
+            <div class="chip">Article no</div>
+            <div class="chip">Supplier, id</div>
+            <div class="chip">Supplier, group</div>
+            <div class="chip">Brand</div>
+            <div class="chip">Brand class.</div>
+            <div class="chip">Is PB</div>
+            <div class="chip">Country</div>
+            <div class="chip">Country group</div>
+            <div class="chip">Purchase type</div>
+            <div class="chip">Platform</div>
+            <div class="chip">Team</div>
+            <div class="chip">CM Group</div>
+          </div>
+
+          <div class="toggles">
+            <div class="seg" aria-label="Before After">
+              <button class="active" type="button">Before</button>
+              <button type="button">After</button>
+            </div>
+            <div class="seg" aria-label="Sales Price Index">
+              <button class="active" type="button">Sales</button>
+              <button type="button">Price Index</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tablecard">
+        <div class="tablehead">
+          <div class="left">
+            <div class="tabletitle">YtD — Breakdown</div>
+            <span class="pill">Mock data</span>
+          </div>
+          <div class="search">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="M21 21l-4.3-4.3"></path>
+            </svg>
+            <input id="q" placeholder="Search category / article no" />
+          </div>
+        </div>
+
+        <div class="scroll">
+          <table id="tbl">
+            <thead>
+              <tr>
+                <th style="min-width:320px">Category</th>
+
+                <!-- ✅ NEW COLUMN HERE (before Product Revenue ’25) -->
+                <th class="bof-col">BoF Kit</th>
+
+                <th>Product Revenue ’25</th>
+                <th>Product Revenue ’26</th>
+                <th>Revenue YoY, %</th>
+                <th>PB Revenue Share ’26</th>
+                <th>PB Revenue Share YoY, %</th>
+                <th>COGS ’25</th>
+                <th>COGS ’26</th>
+                <th>COGS YoY, %</th>
+                <th>Product Profit ’26</th>
+                <th>Product Profit YoY, %</th>
+                <th>PM ’26, %</th>
+                <th>PM YoY, %</th>
+                <th>ASP ’26</th>
+                <th>ASP YoY, %</th>
+                <th>Units ’26</th>
+                <th>Units YoY, %</th>
+                <th>SKU Qty ’26</th>
+                <th>SKU Qty YoY, %</th>
+                <th>COGS/Unit ’26</th>
+                <th>COGS/Unit YoY, %</th>
+                <th>Profit per Unit ’26</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-level="0">
+                <td>
+                  <div class="tree indent-0">
+                    <div class="caret" data-toggle="0">–</div>
+                    <strong>Braking System</strong>
+                  </div>
+                </td>
+
+                <!-- ✅ NEW CELL (randomly 1 here) -->
+                <td class="bof-col num">1</td>
+
+                <td class="num">€ 192 728</td>
+                <td class="num">€ 248 395</td>
+                <td><span class="heat strong num">28,9%</span></td>
+                <td class="num">5,3%</td>
+                <td class="num">-0,9%</td>
+                <td class="num">€ 118 290</td>
+                <td class="num">€ 152 694</td>
+                <td class="num">29,1%</td>
+                <td class="num">€ 95 701</td>
+                <td class="num">28,6%</td>
+                <td class="num">38,5%</td>
+                <td class="num">-0,1%</td>
+                <td class="num">€ 71,4</td>
+                <td class="num">-8,3%</td>
+                <td class="num">3 477</td>
+                <td class="num">41%</td>
+                <td class="num">876</td>
+                <td class="num">-6,0%</td>
+                <td class="num">43,92</td>
+                <td class="num">-8,15%</td>
+                <td class="num">€ 30,09</td>
+              </tr>
+
+              <tr data-level="1" data-parent="0">
+                <td>
+                  <div class="tree indent-1">
+                    <div class="caret" data-toggle="1">–</div>
+                    <strong>Brake Kit</strong>
+                  </div>
+                </td>
+
+                <!-- ✅ NEW CELL (empty here) -->
+                <td class="bof-col num"></td>
+
+                <td class="num">€ 192 728</td>
+                <td class="num">€ 248 395</td>
+                <td><span class="heat strong num">28,9%</span></td>
+                <td class="num">5,3%</td>
+                <td class="num">-0,9%</td>
+                <td class="num">€ 118 290</td>
+                <td class="num">€ 152 694</td>
+                <td class="num">29,1%</td>
+                <td class="num">€ 95 701</td>
+                <td class="num">28,6%</td>
+                <td class="num">38,5%</td>
+                <td class="num">-0,1%</td>
+                <td class="num">€ 71,4</td>
+                <td class="num">-8,3%</td>
+                <td class="num">3 477</td>
+                <td class="num">41%</td>
+                <td class="num">876</td>
+                <td class="num">-6,0%</td>
+                <td class="num">43,92</td>
+                <td class="num">-8,15%</td>
+                <td class="num">€ 30,09</td>
+              </tr>
+
+              <tr data-level="2" data-parent="1">
+                <td>
+                  <div class="tree indent-2">
+                    <div class="caret" data-toggle="2">–</div>
+                    <strong>Brake discs and pads set (3405)</strong>
+                  </div>
+                </td>
+
+                <!-- ✅ NEW CELL (randomly 1 here) -->
+                <td class="bof-col num">1</td>
+
+                <td class="num">€ 192 728</td>
+                <td class="num">€ 248 395</td>
+                <td><span class="heat strong num">28,9%</span></td>
+                <td class="num">5,3%</td>
+                <td class="num">-0,9%</td>
+                <td class="num">€ 118 290</td>
+                <td class="num">€ 152 694</td>
+                <td class="num">29,1%</td>
+                <td class="num">€ 95 701</td>
+                <td class="num">28,6%</td>
+                <td class="num">38,5%</td>
+                <td class="num">-0,1%</td>
+                <td class="num">€ 71,4</td>
+                <td class="num">-8,3%</td>
+                <td class="num">3 477</td>
+                <td class="num">41%</td>
+                <td class="num">876</td>
+                <td class="num">-6,0%</td>
+                <td class="num">43,92</td>
+                <td class="num">-8,15%</td>
+                <td class="num">€ 30,09</td>
+              </tr>
+
+              <tr data-level="3" data-parent="2">
+                <td>
+                  <div class="tree indent-3">
+                    <div class="caret" style="visibility:hidden">•</div>
+                    <span class="num muted">22785129</span>
+                  </div>
+                </td>
+
+                <!-- ✅ NEW CELL (empty here) -->
+                <td class="bof-col num"></td>
+
+                <td class="num">€ 1 248</td>
+                <td class="num">€ 1 985</td>
+                <td><span class="heat num">59,1%</span></td>
+                <td class="num">—</td>
+                <td class="num">—</td>
+                <td class="num">€ 845</td>
+                <td class="num">€ 1 114</td>
+                <td class="num">31,8%</td>
+                <td class="num">€ 403</td>
+                <td class="num">—</td>
+                <td class="num">32,3%</td>
+                <td class="num">+32,3%</td>
+                <td class="num">€ 311,9</td>
+                <td class="num">—</td>
+                <td class="num">4</td>
+                <td class="num">—</td>
+                <td class="num">1</td>
+                <td class="num">0,0%</td>
+                <td class="num">211,13</td>
+                <td class="num">—</td>
+                <td class="num">€ 42,24</td>
+              </tr>
+
+              <tr data-level="3" data-parent="2">
+                <td>
+                  <div class="tree indent-3">
+                    <div class="caret" style="visibility:hidden">•</div>
+                    <span class="num muted">20675625</span>
+                  </div>
+                </td>
+
+                <!-- ✅ NEW CELL (randomly 1 here) -->
+                <td class="bof-col num">1</td>
+
+                <td class="num">€ 985</td>
+                <td class="num">€ 1 664</td>
+                <td><span class="heat strong num">68,9%</span></td>
+                <td class="num">—</td>
+                <td class="num">—</td>
+                <td class="num">€ 435</td>
+                <td class="num">€ 574</td>
+                <td><span class="heat num">207,5%</span></td>
+                <td class="num">€ 550</td>
+                <td><span class="heat num">320,9%</span></td>
+                <td class="num">55,9%</td>
+                <td class="num">+55,9%</td>
+                <td class="num">€ 164,1</td>
+                <td class="num">—</td>
+                <td class="num">6</td>
+                <td class="num">300%</td>
+                <td class="num">1</td>
+                <td class="num">0,0%</td>
+                <td class="num">72,44</td>
+                <td class="num">—</td>
+                <td class="num">€ 91,48</td>
+              </tr>
+
+              <tr data-level="3" data-parent="2">
+                <td>
+                  <div class="tree indent-3">
+                    <div class="caret" style="visibility:hidden">•</div>
+                    <span class="num muted">17982256</span>
+                  </div>
+                </td>
+
+                <!-- ✅ NEW CELL (empty here) -->
+                <td class="bof-col num"></td>
+
+                <td class="num">€ 929</td>
+                <td class="num">€ 1 116</td>
+                <td><span class="heat num">20,1%</span></td>
+                <td class="num">—</td>
+                <td class="num">—</td>
+                <td class="num">€ 393</td>
+                <td class="num">€ 485</td>
+                <td class="num">23,4%</td>
+                <td class="num">€ 356</td>
+                <td class="num">—</td>
+                <td class="num">38,3%</td>
+                <td class="num">+7,1%</td>
+                <td class="num">€ 116,2</td>
+                <td class="num">-14,3%</td>
+                <td class="num">8</td>
+                <td class="num">200%</td>
+                <td class="num">1</td>
+                <td class="num">0,0%</td>
+                <td class="num">71,71</td>
+                <td class="num">-23,14%</td>
+                <td class="num">€ 42,24</td>
+              </tr>
+
+              <tr>
+                <!-- ✅ NOTE: colspan increased by +1 because we added a column -->
+                <td colspan="23" class="muted" style="padding:14px 10px;">
+                  Это статичный HTML-мокап по скриншоту. Если хочешь — скажи, какие именно колонки/метрики должны быть “живыми” (данные/фильтры), и я добавлю JSON-модель + рендер + сортировку/пагинацию.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.querySelectorAll(".tab").forEach(t => {
+      t.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+        t.classList.add("active");
+      });
+    });
+
+    document.querySelectorAll(".chip").forEach(c => {
+      c.addEventListener("click", () => {
+        document.querySelectorAll(".chip").forEach(x => x.classList.remove("active"));
+        c.classList.add("active");
+      });
+    });
+
+    document.querySelectorAll(".seg").forEach(seg=>{
+      seg.querySelectorAll("button").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          seg.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+          btn.classList.add("active");
+        });
+      });
+    });
+
+    const q = document.getElementById("q");
+    q.addEventListener("input", () => {
+      const val = q.value.trim().toLowerCase();
+      document.querySelectorAll("#tbl tbody tr").forEach(tr=>{
+        if (tr.querySelector("td")?.getAttribute("colspan")) return;
+        const text = tr.innerText.toLowerCase();
+        tr.style.display = text.includes(val) ? "" : "none";
+      });
+    });
+
+    const rows = Array.from(document.querySelectorAll("#tbl tbody tr"));
+    function setChildrenVisible(parentToggleId, visible){
+      rows.forEach(r=>{
+        const parent = r.getAttribute("data-parent");
+        if (parent === parentToggleId){
+          r.style.display = visible ? "" : "none";
+          if(!visible){
+            const childToggle = r.querySelector(".caret")?.getAttribute("data-toggle");
+            if(childToggle) setChildrenVisible(childToggle, false);
+          }
+        }
+      });
+    }
+
+    document.querySelectorAll(".caret[data-toggle]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const id = btn.getAttribute("data-toggle");
+        const isOpen = btn.textContent.trim() === "–";
+        btn.textContent = isOpen ? "+" : "–";
+        setChildrenVisible(id, !isOpen);
+      });
+    });
+  </script>
+</body>
+</html>
